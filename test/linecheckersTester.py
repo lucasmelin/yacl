@@ -48,21 +48,21 @@ class LineCheckersTester(unittest.TestCase):
             }
         }
         options = {
-            "lineLength": 80,
+            "lineLength": 80
         }
-        lineToTest1 = "a"*25
-        lineToTest2 = "a"*90
+        shortLine = "a"*25
+        longLine = "a"*90
 
         # When
-        resultIgnore = linecheckers.checkLineLength(lineToTest1, ignoreOption)
+        resultIgnore = linecheckers.checkLineLength(shortLine, ignoreOption)
 
-        result1 = linecheckers.checkLineLength(lineToTest1, options)
-        result2 = linecheckers.checkLineLength(lineToTest2, options)
+        noError = linecheckers.checkLineLength(shortLine, options)
+        errorLong = linecheckers.checkLineLength(longLine, options)
 
         # Then
         self.assertEqual(resultIgnore, "")
-        self.assertEqual(result1, "")
-        self.assertEqual(result2, "Length of the line is more than 80 (90)")
+        self.assertEqual(noError, "")
+        self.assertEqual(errorLong, "Length of the line is more than 80 (90)")
 
     def test_checkCommandUpperLowerCaseUPPER(self):
         """Check if the commands are in UPPER case."""
