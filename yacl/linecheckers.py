@@ -30,6 +30,11 @@ import yacl.parser as parser
 
 def checkLineLength(line, options):
     """Check for lines longer than the recommended length."""
+    try:
+        if "S001" in options["rules"]["oneLineIgnores"]:
+            return ""
+    except KeyError:
+        pass
     if len(line) > options["lineLength"]:
         return "Length of the line is more than " + \
                 str(options["lineLength"]) + \
@@ -39,6 +44,12 @@ def checkLineLength(line, options):
 
 def checkCommandUpperLowerCase(line, options):
     """Check if the commands are upper or lower case."""
+    try:
+        if "S002" in options["rules"]["oneLineIgnores"]:
+            return ""
+    except KeyError:
+        pass
+
     command = parser.getCMakeCommand(line)
     if command:
         if options["commandsStyle"] == "uppercase":

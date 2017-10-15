@@ -33,7 +33,7 @@ import yacl.linecheckers as linecheckers
 class YACL(object):
     """Class of the linter."""
 
-    def __init__(self, configuration):
+    def __init__(self, configuration=None):
         """Init the linter.
 
         :param configuration: override lintern configuration.
@@ -42,7 +42,8 @@ class YACL(object):
         self.totalErrors = 0
         self.lineOptions = {
             "lineLength": 80,
-            "commandsStyle": "uppercase"
+            "commandsStyle": "uppercase",
+            "rules": {}
         }
 
     def lintFile(self, fileName):
@@ -56,12 +57,13 @@ class YACL(object):
             lines = cmakeFile.split("\n")
             lineNumber = 0
             for l in lines:
-                message = self.__lintLine(l)
-                # pylint: disable=C0325
-                print(fileName + ":" + str(lineNumber) + " " + message)
-                lineNumber += 0
+                if "# yacl" in l:
+                    self.__parsePragma(l)
+                else:
+                    self.__lintLine(l, lineNumber, fileName)
+                    lineNumber += 0
 
-    def __lintLine(self, line):
+    def __lintLine(self, line, lineNumber, fileName):
         """Run the checkers for the line passed as an argument.
 
         :param line: line to lint.
@@ -72,4 +74,15 @@ class YACL(object):
         checkers = getmembers(linecheckers, isfunction)
         for c in checkers:
             message = c[1](line, self.lineOptions)
-            return message
+            # pylint: disable=C0325
+            print(fileName + ":" + str(lineNumber) + " " + message)
+        self.lineOptions["rules"]["oneLineIgnores"] = []
+
+    def __parsePragma(self, line):
+        if "# yacl: disable=" in line:
+            splittedLine = line.split("# yacl: disable=")
+            if len(splittedLine) > 1:
+                ignores = splittedLine[1].split(",")
+                self.lineOptions["rules"]["oneLineIgnores"] = ignores
+        else:
+            raise Exception("Unknow pragma: " + line)

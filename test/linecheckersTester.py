@@ -42,23 +42,36 @@ class LineCheckersTester(unittest.TestCase):
     def test_checkLineLength(self):
         """Check if the length of one line is the expected one."""
         # Given
+        ignoreOption = {
+            "rules": {
+                "oneLineIgnores": ["S001"]
+            }
+        }
         options = {
-            "lineLength": 80
+            "lineLength": 80,
         }
         lineToTest1 = "a"*25
         lineToTest2 = "a"*90
 
         # When
+        resultIgnore = linecheckers.checkLineLength(lineToTest1, ignoreOption)
+
         result1 = linecheckers.checkLineLength(lineToTest1, options)
         result2 = linecheckers.checkLineLength(lineToTest2, options)
 
         # Then
+        self.assertEqual(resultIgnore, "")
         self.assertEqual(result1, "")
         self.assertEqual(result2, "Length of the line is more than 80 (90)")
 
     def test_checkCommandUpperLowerCaseUPPER(self):
         """Check if the commands are in UPPER case."""
         # Given
+        ignoreOption = {
+            "rules": {
+                "oneLineIgnores": ["S002"]
+            }
+        }
         optionsUpper = {
             "commandsStyle": "uppercase"
         }
@@ -69,6 +82,8 @@ class LineCheckersTester(unittest.TestCase):
         noCommand = "\"OpenSSL\""
 
         # When
+        resultIgnore = linecheckers.checkCommandUpperLowerCase(upperCommand,
+                                                               ignoreOption)
         noErrorCommand = linecheckers.checkCommandUpperLowerCase(noCommand,
                                                                  optionsUpper)
 
@@ -80,6 +95,7 @@ class LineCheckersTester(unittest.TestCase):
                                                               optionsUpper)
 
         # Then
+        self.assertEqual(resultIgnore, "")
         self.assertEqual(noErrorCommand, "")
 
         self.assertEqual(noErrorUpper, "")
