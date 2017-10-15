@@ -56,6 +56,84 @@ class LineCheckersTester(unittest.TestCase):
         self.assertEqual(result1, "")
         self.assertEqual(result2, "Length of the line is more than 80 (90)")
 
+    def test_checkCommandUpperLowerCaseUPPER(self):
+        """Check if the commands are in UPPER case."""
+        # Given
+        optionsUpper = {
+            "commandsStyle": "uppercase"
+        }
+
+        upperCommand = "FIND_PACKAGE()"
+        lowerCommand = "find_package()"
+        mixedCommand = "FiNd_PaCkAgE()"
+        noCommand = "\"OpenSSL\""
+
+        # When
+        noErrorCommand = linecheckers.checkCommandUpperLowerCase(noCommand,
+                                                                 optionsUpper)
+
+        noErrorUpper = linecheckers.checkCommandUpperLowerCase(upperCommand,
+                                                               optionsUpper)
+        lowerErrorU = linecheckers.checkCommandUpperLowerCase(lowerCommand,
+                                                              optionsUpper)
+        mixedErrorU = linecheckers.checkCommandUpperLowerCase(mixedCommand,
+                                                              optionsUpper)
+
+        # Then
+        self.assertEqual(noErrorCommand, "")
+
+        self.assertEqual(noErrorUpper, "")
+        self.assertEqual(lowerErrorU, "CMake commands should be uppercase")
+        self.assertEqual(mixedErrorU, "CMake commands should be uppercase")
+
+    def test_checkCommandUpperLowerCaseLOWER(self):
+        """Check if the commands are in LOWER case."""
+        # Given
+        optionsLower = {
+            "commandsStyle": "lowercase"
+        }
+
+        upperCommand = "FIND_PACKAGE()"
+        lowerCommand = "find_package()"
+        mixedCommand = "FiNd_PaCkAgE()"
+
+        # When
+        upperErrorL = linecheckers.checkCommandUpperLowerCase(upperCommand,
+                                                              optionsLower)
+        noErrorLower = linecheckers.checkCommandUpperLowerCase(lowerCommand,
+                                                               optionsLower)
+        mixedError = linecheckers.checkCommandUpperLowerCase(mixedCommand,
+                                                             optionsLower)\
+
+        # Then
+        self.assertEqual(upperErrorL, "CMake commands should be lowercase")
+        self.assertEqual(noErrorLower, "")
+        self.assertEqual(mixedError, "CMake commands should be lowercase")
+
+    def test_checkCommandUpperLowerCaseMIXED(self):
+        """Check if the commands are in mixed case."""
+        # Given
+        optionsMixed = {
+            "commandsStyle": "mixed"
+        }
+
+        upperCommand = "FIND_PACKAGE()"
+        lowerCommand = "find_package()"
+        mixedCommand = "FiNd_PaCkAgE()"
+
+        # When
+        upperNE = linecheckers.checkCommandUpperLowerCase(upperCommand,
+                                                          optionsMixed)
+        lowerNE = linecheckers.checkCommandUpperLowerCase(lowerCommand,
+                                                          optionsMixed)
+        mixedNE = linecheckers.checkCommandUpperLowerCase(mixedCommand,
+                                                          optionsMixed)
+
+        # Then
+        self.assertEqual(upperNE, "")
+        self.assertEqual(lowerNE, "")
+        self.assertEqual(mixedNE, "")
+
 
 if __name__ == '__main__':
     unittest.main()

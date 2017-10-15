@@ -1,4 +1,4 @@
-"""One line checkers.
+"""Parser functions.
 
 Author: Israel Blancas @iblancasa
 
@@ -24,36 +24,13 @@ The MIT License (MIT)
     ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
     USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
-from __future__ import absolute_import
-import yacl.parser as parser
+import re
 
 
-def checkLineLength(line, options):
-    """Check for lines longer than the recommended length."""
-    if len(line) > options["lineLength"]:
-        return "Length of the line is more than " + \
-                str(options["lineLength"]) + \
-                " (" + str(len(line)) + ")"
-    return ""
-
-
-def checkCommandUpperLowerCase(line, options):
-    """Check if the commands are upper or lower case."""
-    command = parser.getCMakeCommand(line)
-    if command:
-        if options["commandsStyle"] == "uppercase":
-            upper = command.upper()
-            if upper != command:
-                message = "uppercase"
-            else:
-                return ""
-        elif options["commandsStyle"] == "lowercase":
-            lower = command.lower()
-            if lower != command:
-                message = "lowercase"
-            else:
-                return ""
-        elif options["commandsStyle"] == "mixed":
-            return ""
-        return "CMake commands should be " + message
-    return ""
+def getCMakeCommand(line):
+    """Search for a cmake command in the given line."""
+    regex = re.compile(r'^\s*(\w+)(\s*)\(', re.VERBOSE)
+    match = regex.match(line)
+    if match:
+        return match.group(1)
+    return None

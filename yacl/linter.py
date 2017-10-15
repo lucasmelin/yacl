@@ -41,7 +41,8 @@ class YACL(object):
         """
         self.totalErrors = 0
         self.lineOptions = {
-            "lineLength": 80
+            "lineLength": 80,
+            "commandsStyle": "uppercase"
         }
 
     def lintFile(self, fileName):
