@@ -25,30 +25,50 @@ The MIT License (MIT)
     USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 from __future__ import absolute_import
-import inspect
+from inspect import getmembers
+from inspect import isfunction
 import yacl.linecheckers as linecheckers
 
+
 class YACL(object):
+    """Class of the linter."""
+
     def __init__(self, configuration):
+        """Init the linter.
+
+        :param configuration: override lintern configuration.
+        :type configuration: dict.
+        """
         self.totalErrors = 0
         self.lineOptions = {
             "lineLength": 80
         }
 
     def lintFile(self, fileName):
+        """Lint one cmake file.
+
+        :param fileName: path to the file to lint.
+        :type fileName: str.
+        """
         with open(fileName) as fileToLint:
             cmakeFile = fileToLint.read()
             lines = cmakeFile.split("\n")
             lineNumber = 0
             for l in lines:
-                self.__lintLine(l, lineNumber, fileName)
+                message = self.__lintLine(l)
+                # pylint: disable=C0325
+                print(fileName + ":" + str(lineNumber) + " " + message)
                 lineNumber += 0
 
+    def __lintLine(self, line):
+        """Run the checkers for the line passed as an argument.
 
-    def __lintLine(self, line, lineNumber, fileName):
-        checkers = inspect.getmembers(linecheckers, inspect.isfunction)
+        :param line: line to lint.
+        :type line: str.
+        :return: error message.
+        :rtype: str.
+        """
+        checkers = getmembers(linecheckers, isfunction)
         for c in checkers:
-            message = ""
             message = c[1](line, self.lineOptions)
-            if message:
-                print(fileName + ":" + str(lineNumber) + " " + message)
+            return message
