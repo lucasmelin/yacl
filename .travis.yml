@@ -1,0 +1,6 @@
+language: python
+
+python:
+  - 3.4
+script:
+  - if [[ $TRAVIS_PYTHON_VERSION == '3.4' ]]; then cd /test && python -m unittest linterTester linecheckersTester; fi
